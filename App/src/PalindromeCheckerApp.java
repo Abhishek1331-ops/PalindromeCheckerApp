@@ -1,86 +1,67 @@
 import java.util.*;
 
-// 1. Define the PalindromeStrategy interface
 interface PalindromeStrategy {
     boolean isPalindrome(String input);
+    String getName();
 }
 
 class StackStrategy implements PalindromeStrategy {
+    public String getName() { return "Stack Strategy"; }
     @Override
     public boolean isPalindrome(String input) {
         String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
         Stack<Character> stack = new Stack<>();
-
-        for (char c : clean.toCharArray()) {
-            stack.push(c);
-        }
-
+        for (char c : clean.toCharArray()) stack.push(c);
         StringBuilder reversed = new StringBuilder();
-        while (!stack.isEmpty()) {
-            reversed.append(stack.pop());
-        }
-
+        while (!stack.isEmpty()) reversed.append(stack.pop());
         return clean.equals(reversed.toString());
     }
 }
 
 class DequeStrategy implements PalindromeStrategy {
+    public String getName() { return "Deque Strategy"; }
     @Override
     public boolean isPalindrome(String input) {
         String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
         Deque<Character> deque = new LinkedList<>();
-
-        for (char c : clean.toCharArray()) {
-            deque.addLast(c);
-        }
-
+        for (char c : clean.toCharArray()) deque.addLast(c);
         while (deque.size() > 1) {
-            if (!deque.removeFirst().equals(deque.removeLast())) {
-                return false;
-            }
+            if (!deque.removeFirst().equals(deque.removeLast())) return false;
         }
         return true;
-    }
-}
-
-class PalindromeContext {
-    private PalindromeStrategy strategy;
-
-    public void setStrategy(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean check(String text) {
-        if (strategy == null) throw new IllegalStateException("Strategy not set!");
-        return strategy.isPalindrome(text);
     }
 }
 
 public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        PalindromeContext context = new PalindromeContext();
-
-        System.out.println("--- UC12: Strategy Pattern Palindrome Checker ---");
-        System.out.print("Enter a string to check: ");
+        System.out.println("--- UC13: Palindrome Algorithm Performance Comparison ---");
+        System.out.print("Enter a long string to test performance: ");
         String input = scanner.nextLine();
 
-        System.out.println("\nChoose Algorithm Strategy:");
-        System.out.println("1. Stack Strategy");
-        System.out.println("2. Deque Strategy");
-        System.out.print("Selection: ");
-        int choice = scanner.nextInt();
+        List<PalindromeStrategy> strategies = Arrays.asList(
+                new StackStrategy(),
+                new DequeStrategy()
+        );
 
-        if (choice == 1) {
-            context.setStrategy(new StackStrategy());
-            System.out.println("Using Stack-based Algorithm...");
-        } else {
-            context.setStrategy(new DequeStrategy());
-            System.out.println("Using Deque-based Algorithm...");
+        System.out.println("\nPerformance Results:");
+        System.out.println("---------------------------------------------------------");
+        System.out.printf("%-20s | %-12s | %-15s\n", "Algorithm", "Is Palindrome", "Time (nanos)");
+        System.out.println("---------------------------------------------------------");
+
+        for (PalindromeStrategy strategy : strategies) {
+
+            long startTime = System.nanoTime();
+
+            boolean result = strategy.isPalindrome(input);
+
+            long endTime = System.nanoTime();
+            long duration = endTime - startTime;
+
+            System.out.printf("%-20s | %-13b | %-15d\n",
+                    strategy.getName(), result, duration);
         }
-
-        boolean result = context.check(input);
-        System.out.println("\nIs Palindrome: " + result);
+        System.out.println("---------------------------------------------------------");
 
         scanner.close();
     }

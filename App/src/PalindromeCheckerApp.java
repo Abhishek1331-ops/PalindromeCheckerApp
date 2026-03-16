@@ -5,32 +5,42 @@ public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("--- UC9: Recursive Palindrome Checker ---");
-        System.out.print("Enter a string: ");
+        System.out.println("--- UC10: Case-Insensitive & Space-Ignored Palindrome Checker ---");
+        System.out.print("Enter a string (try phrases with spaces/punctuation): ");
         String input = scanner.nextLine();
 
-        String cleanStr = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String processedStr = preprocess(input);
 
-        if (isPalindromeRecursive(cleanStr, 0, cleanStr.length() - 1)) {
-            System.out.println("Result: '" + input + "' is a palindrome.");
+        System.out.println("Normalized String: " + processedStr);
+
+        if (isPalindrome(processedStr)) {
+            System.out.println("Result: Success! It is a palindrome.");
         } else {
-            System.out.println("Result: '" + input + "' is NOT a palindrome.");
+            System.out.println("Result: Failure. It is NOT a palindrome.");
         }
 
         scanner.close();
     }
 
-    public static boolean isPalindromeRecursive(String str, int start, int end) {
+    public static String preprocess(String str) {
+        if (str == null) return "";
 
-        if (start >= end) {
-            return true;
+        return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+    }
+
+    public static boolean isPalindrome(String str) {
+        if (str.isEmpty()) return true;
+
+        int left = 0;
+        int right = str.length() - 1;
+
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
         }
-
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
-        }
-
-
-        return isPalindromeRecursive(str, start + 1, end - 1);
+        return true;
     }
 }

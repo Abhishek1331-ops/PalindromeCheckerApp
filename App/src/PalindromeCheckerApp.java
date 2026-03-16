@@ -1,14 +1,13 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Scanner;
 
-public class PalindromeCheckerApp {
+public class racecarPalindromeCheckerApp {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("--- UC6: Queue + Stack Based Palindrome Check ---");
+        System.out.println("--- UC7: Deque-Based Optimized Palindrome Checker ---");
         System.out.print("Enter a string to check: ");
         String input = scanner.nextLine();
 
@@ -27,19 +26,17 @@ public class PalindromeCheckerApp {
 
         if (cleanStr.isEmpty()) return true;
 
-        Queue<Character> queue = new LinkedList<>();
-        Stack<Character> stack = new Stack<>();
-
+        Deque<Character> deque = new ArrayDeque<>();
         for (char ch : cleanStr.toCharArray()) {
-            queue.add(ch);
-            stack.push(ch);
+            deque.addLast(ch);
         }
 
-        while (!queue.isEmpty()) {
-            char fromQueue = queue.remove();
-            char fromStack = stack.pop();
 
-            if (fromQueue != fromStack) {
+        while (deque.size() > 1) {
+            char front = deque.removeFirst();
+            char rear = deque.removeLast();
+
+            if (front != rear) {
                 return false;
             }
         }
